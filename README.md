@@ -31,4 +31,30 @@ The RealEstate App is a comprehensive property management and listing applicatio
 ### Installation
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/HeinHtet14120/realestate-app.git
+   git clone https://github.com/HeinHtet14120/RealEstate.git
+   
+### Install dependencies
+1. **For Backend:**
+   ```sh
+   cd api
+   npm install
+   
+2. **For Frontend:**
+   ```sh
+   cd client
+   npm install
+
+### Running Application
+1. **For Backend:**
+   ```sh
+   cd api
+   nodemon app.js
+   
+2. **For Frontend:**
+   ```sh
+   cd client
+   npm run dev
+## Demo Account
+- **Username:** HeinHtet
+- **Password:** hh1234
+
