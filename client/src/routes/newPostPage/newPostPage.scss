@@ -17,12 +17,10 @@
 
         .item {
           width: 30%;
+          height: auto;
           display: flex;
           flex-direction: column;
           gap: 5px;
-
-          label {
-          }
 
           input {
             padding: 20px;

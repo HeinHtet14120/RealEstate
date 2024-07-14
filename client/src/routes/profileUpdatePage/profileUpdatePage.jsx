@@ -11,7 +11,7 @@ function ProfileUpdatePage() {
 
   const { currentUser, updateUser } = useContext(AuthContext);
   const [error, setError] = useState("");
-  const [avatar, setAvatar] = useState(currentUser.avatar)
+  const [avatar, setAvatar] = useState([])
 
 
   const handleSubmit = async (e) => {
@@ -24,7 +24,10 @@ function ProfileUpdatePage() {
 
     try {
       const res = await apiRequest.put(`/user/${currentUser.id}`, {
-        username, email, password, avatar
+        username, 
+        email, 
+        password, 
+        avatar:avatar[0]
       })
 
       updateUser(res.data)
@@ -69,7 +72,7 @@ function ProfileUpdatePage() {
         </form>
       </div>
       <div className="sideContainer">
-        <img src={avatar || "/noavatar.png"} alt="" className="avatar" />
+        <img src={avatar[0] || currentUser.avatar || "/noavatar.png"} alt="" className="avatar" />
 
         <UploadWidget uwConfig={{
           cloudName: "dladtdkeg",
@@ -79,7 +82,7 @@ function ProfileUpdatePage() {
           folder: "avatars"
         }}
 
-        setAvatar={setAvatar}
+        setState={setAvatar}
         />
       </div>
     </div>
