@@ -31,4 +31,4 @@ The RealEstate App is a comprehensive property management and listing applicatio
 ### Installation
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/your-username/realestate-app.git
+   git clone https://github.com/HeinHtet14120/realestate-app.git
