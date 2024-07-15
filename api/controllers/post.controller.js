@@ -1,10 +1,26 @@
+import { query } from "express";
 import prisma from "../lib/prisma.js";
 
 export const getPosts = async (req, res) => {
-    try {
-        const posts = await prisma.post.findMany();
+    const query = req.query;
 
-        res.status(200).json(posts)
+    try {
+        const posts = await prisma.post.findMany({
+            where: {
+                city: query.city || undefined,
+                type: query.type || undefined,
+                property: query.property || undefined,
+                bedroom: parseInt(query.bedroom) || undefined,
+                price: {
+                    gte: parseInt(query.minPrice) || 0,
+                    lte: parseInt(query.maxPrice) || 1000000,
+                }
+            }
+        });
+
+        // setTimeout(() => {
+            res.status(200).json(posts)
+        // },2000)
 
     } catch (err) {
         console.log(err)
