@@ -46,9 +46,9 @@ function NewPostPage() {
           restaurant: parseInt(inputs.restaurant)
         }
       })
-
+      console.log("this is res : " + res.data.id)
       navigate('/'+res.data.id);
-      console.log("this is res : " + res.data)
+      
     }catch(err){
       console.log(err)
       setError(err)
