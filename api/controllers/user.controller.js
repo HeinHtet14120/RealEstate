@@ -33,7 +33,7 @@ export const updateUser = async (req, res) => {
 
     const id = req.params.id;
     const userTokenID = req.userId;
-    const { password, avatar ,...inputs } = req.body;
+    const { password, avatar, ...inputs } = req.body;
 
     if (!id == userTokenID) {
         return res.status(403).json({ message: "Not Authorized !" });
@@ -43,21 +43,21 @@ export const updateUser = async (req, res) => {
 
     try {
 
-        if(password){
-            updatePassword = await bcrypt.hash(password,10);
+        if (password) {
+            updatePassword = await bcrypt.hash(password, 10);
         }
         const updateUser = await prisma.user.update({
             where: { id },
             data: {
                 ...inputs,
-                ...(updatePassword && {password:updatePassword}),
+                ...(updatePassword && { password: updatePassword }),
                 ...(avatar && { avatar }),
             },
         });
 
         console.log(updateUser);
 
-        const { password: userPassword , ...rest} = updateUser
+        const { password: userPassword, ...rest } = updateUser
 
         res.status(200).json(rest)
 
@@ -79,10 +79,55 @@ export const deleteUser = async (req, res) => {
     try {
 
         await prisma.user.delete({
-            where: {id}
+            where: { id }
         });
 
-        res.status(200),json({message: "User deleted !"})
+        res.status(200), json({ message: "User deleted !" })
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Failed to delete user !" })
+    }
+}
+
+
+export const savePost = async (req, res) => {
+
+    const postId = req.body.postId;
+    const tokenUserId = req.userId;
+
+    try {
+
+        const savedPost = await prisma.savedPost.findUnique({
+            where: {
+                userId_postId: {
+                    userId: tokenUserId,
+                    postId,
+                },
+            },
+        });
+
+        if (savePost) {
+            await prisma.savedPost.delete({
+                where: {
+                    id: savePost.id,
+                }
+            });
+
+            res.status(200), json({ message: "Post removed from saved list !" })
+
+        } else {
+            await prisma.savedPost.create({
+                data: {
+                    userId: tokenUserId,
+                    postId,
+                }
+            });
+
+            res.status(200), json({ message: "Post saved !" })
+
+        }
+
 
     } catch (err) {
         console.log(err)
