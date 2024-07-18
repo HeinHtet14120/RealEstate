@@ -1,5 +1,6 @@
 import { query } from "express";
 import prisma from "../lib/prisma.js";
+import jwt from "jsonwebtoken"
 
 export const getPosts = async (req, res) => {
     const query = req.query;
@@ -19,7 +20,7 @@ export const getPosts = async (req, res) => {
         });
 
         // setTimeout(() => {
-            res.status(200).json(posts)
+        res.status(200).json(posts)
         // },2000)
 
     } catch (err) {
@@ -31,22 +32,48 @@ export const getPosts = async (req, res) => {
 
 export const getPost = async (req, res) => {
     const id = req.params.id;
+    
 
     try {
         const post = await prisma.post.findUnique({
             where: { id },
             include: {
-                postDetail:true,
-                user:{
-                    select:{
-                        username:true,
-                        avatar:true
+                postDetail: true,
+                user: {
+                    select: {
+                        username: true,
+                        avatar: true
                     }
                 }
             }
-        })
+        });
 
-        res.status(200).json({message: post})
+        const token = req.cookies?.token;
+
+
+        if (token) {
+            jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
+                if (!err) {
+                    const saved = await prisma.savedPost.findUnique({
+                        where: {
+                            userId_postId: {
+                                postId: id,
+                                userId: payload.id,
+                            },
+                        },
+                    });
+
+                    const isSaved = saved ? true : false;
+                    res.status(200).json({ ...post, isSaved });
+
+                }
+            })
+        } else {
+            const isSaved = false;
+            res.status(200).json({ ...post, isSaved});
+        }
+
+
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "Failed to get post !" })
