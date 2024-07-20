@@ -3,7 +3,6 @@ import "./card.scss";
 
 function Card({ item }) {
 
-  console.log(item)
   return (
     <div className="card">
       <Link to={`/${item.id}`} className="imageContainer">
