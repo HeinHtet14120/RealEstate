@@ -22,7 +22,7 @@ The RealEstate App is a comprehensive property management and listing applicatio
   - MongoDB
 - **Real-Time Communication:**
   - Socker.io
-- **Notification
+- **Notification**
   - Zustand
 
 ## Getting Started
