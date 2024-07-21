@@ -21,7 +21,9 @@ The RealEstate App is a comprehensive property management and listing applicatio
 - **Database:**
   - MongoDB
 - **Real-Time Communication:**
-  - loading...
+  - Socker.io
+- **Notification
+  - Zustand
 
 ## Getting Started
 ### Prerequisites
