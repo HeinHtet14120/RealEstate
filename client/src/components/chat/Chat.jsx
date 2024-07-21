@@ -1,13 +1,21 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "./chat.scss";
 import { AuthContext } from "../../context/AuthContext"
 import apiRequest from "../../lib/apiRequest.js"
 import { format } from "timeago.js"
+import { SocketContext } from "../../context/SocketContext.jsx";
 
 function Chat({ chats }) {
   const { currentUser } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext)
   const [chat, setChat] = useState(null);
   const [messages, setMessages] = useState([]);
+
+  const messageEndRef = useRef();
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat])
 
   const handleOpenChat = async (id, receiver) => {
 
@@ -38,10 +46,37 @@ function Chat({ chats }) {
       const res = await apiRequest.post("/messages/" + chat.id, { text });
       setChat((prev) => ({ ...prev, messages: [...prev.messages, res.data] }));
       e.target.reset();
+
+      socket.emit("sendMessage", {
+        receiverId: chat.receiver.id,
+        data: res.data,
+      });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
+
+  useEffect(() => {
+    const read = async () => {
+      try {
+        await apiRequest.put("/chats/read/" + chat.id);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    if (chat && socket) {
+      socket.on("getMessage", (data) => {
+        if (chat.id === data.chatId) {
+          setChat((prev) => ({ ...prev, messages: [...prev.messages, data] }));
+          read();
+        }
+      });
+    }
+    return () => {
+      socket.off("getMessage");
+    };
+  }, [socket, chat]);
+
 
   return (
     <div className="chat">
@@ -86,8 +121,7 @@ function Chat({ chats }) {
 
             }
 
-
-
+            <div ref={messageEndRef}></div>
           </div>
           <form onSubmit={handleSubmit} className="bottom">
             <textarea name="text"></textarea>
