@@ -23,6 +23,10 @@ app.use('/api/user', userRoute);
 app.use('/api/chats', chatRoute);
 app.use('/api/messages', messageRoute);
 
+app.use('/', (req, res) => {
+    res.send("Server is running")
+});
+
 
 app.listen(8000, () => {
     console.log("sever started")
